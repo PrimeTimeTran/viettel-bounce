@@ -25,6 +25,7 @@ export default class App extends React.Component {
 
   openAnimation = () => {
     const { animatedY } = this.state
+
     Animated.timing(animatedY, {
       toValue: -100,
       duration: 250,
@@ -43,34 +44,32 @@ export default class App extends React.Component {
   }
 
   render() {
-    const { container, mainButtonStyle, textStyle } = styles
+    const {
+      container,
+      textStyle,
+      modalStyle,
+      mainButtonStyle,
+      littleButtonStyle
+    } = styles
+
     const { modalVisible, animatedY } = this.state
 
-    const phoneStyle = [
-      mainButtonStyle, {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
+    const phoneButtonStyle = [
+      mainButtonStyle, littleButtonStyle, {
         backgroundColor: 'blue',
         transform: [{ translateY: Animated.multiply(2, animatedY) }]
       }
     ]
 
-    const mapStyle = [
-      mainButtonStyle, {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
+    const mapButtonStyle = [
+      mainButtonStyle, littleButtonStyle, {
         backgroundColor: 'orange',
         transform: [{ translateY: Animated.multiply(1.5, animatedY) }]
       }
     ]
 
     const infoButtonStyle = [
-      mainButtonStyle, {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
+      mainButtonStyle, littleButtonStyle, {
         backgroundColor: 'pink',
         transform: [{ translateY: animatedY }]
       }
@@ -83,20 +82,14 @@ export default class App extends React.Component {
           animationType="fade"
           visible={modalVisible}
         >
-          <View
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: 'rgba(0,0,0,0.5)'
-            }}>
-            <Animated.View style={phoneStyle}>
+          <View style={modalStyle}>
+            <Animated.View style={phoneButtonStyle}>
               <TouchableHighlight>
                 <Text style={textStyle}>Phone</Text>
               </TouchableHighlight>
             </Animated.View>
 
-            <Animated.View style={mapStyle}>
+            <Animated.View style={mapButtonStyle}>
               <TouchableHighlight>
                 <Text style={textStyle}>Maps</Text>
               </TouchableHighlight>
@@ -131,31 +124,32 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
+    backgroundColor: '#fff',
     justifyContent: 'center',
   },
   mainButtonStyle: {
-    position: 'absolute',
-    bottom: 20,
     right: 20,
-    height: 100,
+    bottom: 20,
     width: 100,
-    backgroundColor: 'red',
+    height: 100,
     borderRadius: 50,
+    position: 'absolute',
+    backgroundColor: 'red',
     justifyContent: 'center'
+  },
+  modalStyle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)'
   },
   textStyle: {
     alignSelf: 'center'
   },
-  littleButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    height: 100,
-    width: 100,
-    backgroundColor: 'yellow',
-    borderRadius: 50,
-    justifyContent: 'center'
+  littleButtonStyle: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   }
 });
