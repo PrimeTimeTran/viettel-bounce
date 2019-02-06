@@ -1,22 +1,21 @@
-import React from 'react'
+import React from 'react';
 import {
   Text,
   View,
-  Alert,
   Modal,
   Easing,
-  Animated,
+  Animated ,
   StyleSheet,
   TouchableHighlight,
-} from 'react-native'
+} from 'react-native';
 
 export default class App extends React.Component {
   state = {
     modalVisible: false,
-    animateYAxis: new Animated.Value(0)
+    animatedY: new Animated.Value(0)
   }
 
-  toggleModal = () => {
+  openModal = () => {
     this.setState({ modalVisible: true }, this.openAnimation)
   }
 
@@ -25,103 +24,107 @@ export default class App extends React.Component {
   }
 
   openAnimation = () => {
-    const { animateYAxis } = this.state
-
-    Animated.timing(animateYAxis, {
+    const { animatedY } = this.state
+    Animated.timing(animatedY, {
       toValue: -100,
       duration: 250,
-      easing: Easing.elastic(1.5),
+      easing: Easing.elastic(1.5)
     }).start()
   }
 
   closeAnimation = () => {
-    const { animateYAxis } = this.state
+    const { animatedY } = this.state
 
-    Animated.timing(animateYAxis, {
+    Animated.timing(animatedY, {
       toValue: 0,
       duration: 250,
-      easing: Easing.bezier(0, -0.2, 0, -0.4),
-    }).start(() => {
-      this.setState({ modalVisible: false })
-    })
+      easing: Easing.bezier(0, -0.2, 0, -0.4)
+    }).start(() => this.setState({ modalVisible: false }))
   }
 
   render() {
-    const {
-      textStyle,
-      openStyle,
-      container,
-      modalStyle,
-      closeStyle,
-      littleButtons
-    } = styles
+    const { container, mainButtonStyle, textStyle } = styles
+    const { modalVisible, animatedY } = this.state
 
-    const { animateYAxis, modalVisible } = this.state
+    const phoneStyle = [
+      mainButtonStyle, {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: 'blue',
+        transform: [{ translateY: Animated.multiply(2, animatedY) }]
+      }
+    ]
 
-    const animatedInfo = {
-      ...littleButtons,
-      backgroundColor: 'yellow',
-      transform: [{ translateY:  animateYAxis }]
-    }
+    const mapStyle = [
+      mainButtonStyle, {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: 'orange',
+        transform: [{ translateY: Animated.multiply(1.5, animatedY) }]
+      }
+    ]
 
-    const addAnimatedMap = Animated.multiply(1.5, animateYAxis)
-
-    const animatedMap = {
-      ...littleButtons,
-      backgroundColor: 'blue',
-      transform: [{ translateY:  addAnimatedMap }]
-    }
-
-    const addAnimatedPhone = Animated.multiply(2, animateYAxis)
-
-    const animatedPhone = {
-      ...littleButtons,
-      backgroundColor: 'pink',
-      transform: [{ translateY:  addAnimatedPhone }]
-    }
-
+    const infoButtonStyle = [
+      mainButtonStyle, {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: 'pink',
+        transform: [{ translateY: animatedY }]
+      }
+    ]
     return (
       <View style={container}>
-        <Text>Some background text</Text>
+        <Text>Background Text</Text>
         <Modal
           transparent
           animationType="fade"
           visible={modalVisible}
-          onRequestClose={() => { Alert.alert('Modal has been closed.')}}>
-          <View style={modalStyle}>
-
-            <Animated.View style={[closeStyle, animatedPhone]}>
-              <TouchableHighlight onPress={this.toggleModal}>
-                  <Text style={textStyle}>Phone</Text>
+        >
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(0,0,0,0.5)'
+            }}>
+            <Animated.View style={phoneStyle}>
+              <TouchableHighlight>
+                <Text style={textStyle}>Phone</Text>
               </TouchableHighlight>
             </Animated.View>
 
-            <Animated.View style={[closeStyle, animatedMap]}>
-              <TouchableHighlight onPress={this.toggleModal}>
-                  <Text style={textStyle}>Maps</Text>
+            <Animated.View style={mapStyle}>
+              <TouchableHighlight>
+                <Text style={textStyle}>Maps</Text>
               </TouchableHighlight>
             </Animated.View>
 
-            <Animated.View style={[closeStyle, animatedInfo]}>
-              <TouchableHighlight onPress={this.toggleModal}>
-                  <Text style={textStyle}>Info</Text>
+            <Animated.View style={infoButtonStyle}>
+              <TouchableHighlight>
+                <Text style={textStyle}>Info</Text>
               </TouchableHighlight>
             </Animated.View>
 
             <TouchableHighlight
-              style={closeStyle}
-              onPress={this.closeModal}>
-                <Text style={textStyle}>Hide</Text>
+              style={mainButtonStyle}
+              onPress={this.closeModal}
+            >
+              <Text style={textStyle}>Close</Text>
             </TouchableHighlight>
           </View>
+
         </Modal>
         <TouchableHighlight
-          onPress={this.toggleModal}
-          style={openStyle}>
-          <Text style={textStyle}>Show Modal</Text>
+          style={mainButtonStyle}
+          onPress={this.openModal}
+        >
+          <Text style={textStyle}>Show</Text>
         </TouchableHighlight>
       </View>
-    )
+    );
   }
 }
 
@@ -132,39 +135,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  mainButtonStyle: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    height: 100,
+    width: 100,
+    backgroundColor: 'red',
+    borderRadius: 50,
+    justifyContent: 'center'
+  },
   textStyle: {
     alignSelf: 'center'
   },
-  openStyle: {
-    right: 20,
-    bottom: 20,
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+  littleButton: {
     position: 'absolute',
-    backgroundColor: 'red',
-    justifyContent: 'center'
-  },
-  modalStyle: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)'
-  },
-  closeStyle: {
-    right: 20,
     bottom: 20,
-    width: 100,
+    right: 20,
     height: 100,
+    width: 100,
+    backgroundColor: 'yellow',
     borderRadius: 50,
-    position: 'absolute',
-    backgroundColor: 'red',
     justifyContent: 'center'
-  },
-  littleButtons: {
-    width: 50,
-    right: 40,
-    height: 50,
-    bottom: 40,
   }
-})
+});
